@@ -24,10 +24,10 @@ if (process.env.CLEARDB_DATABASE_URL) {
 };
 
 
-app.get("/getallcountries", (req, res) => {
+app.get("/getproductreviews/:productid", (req, res) => {
 
   db.query(
-    `select * from countries`,
+    `select * from reviews where productid='${req.params.productid}'`,
     (err, result) => {
       if (err) {
         console.log(err);
@@ -38,44 +38,10 @@ app.get("/getallcountries", (req, res) => {
   );
 });
 
-app.get("/getalldata", (req, res) => {
-
+app.get("/createreview", (req, res) => {
   db.query(
-    `select *
-from INFORMATION_SCHEMA.COLUMNS
-where TABLE_NAME='countries'`,
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    }
-  );
-});
-
-app.get("/searchcountries/:country", (req, res) => {
-  const country = req.params.country;
-
-console.log(req.body)
-  db.query(
-    `SELECT * FROM countries WHERE name="${country}"`,
-    (err, result) => {
-      if (err) {
-        console.log(err);
-      } else {
-        res.send(result);
-      }
-    }
-  );
-});
-
-app.get("/searchstats/:stat", (req, res) => {
-  const stat = req.params.stat;
-
-console.log(req.params.stat)
-  db.query(
-    `SELECT ${stat},name,population FROM countries where ${stat} && population is not null;`,
+    'INSERT INTO reviews (id,productid,name,review,stars) VALUES (?,?,?,?,?)',
+     [req.body.id,req.body.productid,req.body.name,req.body.review,req.body.stars],
     (err, result) => {
       if (err) {
         console.log(err);
@@ -86,9 +52,6 @@ console.log(req.params.stat)
     }
   );
 });
-
-
-
 
 
 
